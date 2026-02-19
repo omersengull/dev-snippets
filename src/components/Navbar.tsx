@@ -1,19 +1,41 @@
 "use client";
 import { Search, Bell, Menu, Plus, UserRound, Code } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import AuthModal from "./AuthModal";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
-
-export const Navbar = () => {
+import { NarrowSearchCard } from "./NarrowSearchCard";
+interface SnippetProps {
+  id: string;
+  title: string;
+  description?: string;
+  code: string;
+  language: string;
+  views: number;
+  saved_count: number;
+}
+export const Navbar = ({ snippets }: { snippets: SnippetProps[] | null }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredSnippets = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    return snippets?.filter(
+      (s) =>
+        s.title.toLowerCase().includes(searchQuery.toLocaleLowerCase()) ||
+        s.description
+          ?.toLowerCase()
+          .includes(searchQuery.toLocaleLowerCase()) ||
+        s.code.toLowerCase().includes(searchQuery.toLocaleLowerCase()),
+    );
+  }, [searchQuery, snippets]);
   const router = useRouter();
   const supabase = createClient();
   const lastUserRef = useRef<User | null>(null);
+
   useEffect(() => {
     const checkUser = async () => {
       const {
@@ -85,10 +107,30 @@ export const Navbar = () => {
                 <Search size={18} />
               </div>
               <input
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                }}
                 type="text"
                 className="block w-full pl-10 pr-3 py-2 bg-dark-900 border border-dark-700 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all"
                 placeholder="Search snippets, tags, or authors..."
               />
+              {searchQuery && (
+                <div className="absolute bg-dark-800 border border-dark-700 rounded-xl mt-2 w-full max-h-80 overflow-y-auto shadow-2xl z-50">
+                  {filteredSnippets && filteredSnippets.length > 0 ? (
+                    filteredSnippets.map((snippet) => (
+                      <NarrowSearchCard
+                        key={snippet.id}
+                        snippet={snippet}
+                        onSelect={() => setSearchQuery("")}
+                      />
+                    ))
+                  ) : (
+                    <div className="p-2">Sonuç bulunamadı.</div>
+                  )}
+                  
+                </div>
+              )}
             </div>
           </div>
 
@@ -119,16 +161,15 @@ export const Navbar = () => {
             <button className="lg:hidden text-slate-400 hover:text-white">
               <Menu size={24} />
             </button>
-           
+
             <div
               onClick={() => setIsLoginModalOpen(!isLoginModalOpen)}
-             
               className="w-9 h-9 rounded-full flex items-center justify-center border border-dark-700 cursor-pointer hover:border-primary transition-all overflow-hidden bg-dark-900 relative"
             >
               {user ? (
                 user.user_metadata.avatar_url || user.user_metadata.picture ? (
                   <img
-                  referrerPolicy="no-referrer"
+                    referrerPolicy="no-referrer"
                     src={
                       user.user_metadata.avatar_url ||
                       user.user_metadata.picture

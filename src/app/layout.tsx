@@ -3,6 +3,7 @@ import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Toaster } from "react-hot-toast";
+import { createClient } from "@/utils/supabase/server";
 
 // Font Tanımlamaları
 const spaceGrotesk = Space_Grotesk({
@@ -20,16 +21,23 @@ export const metadata: Metadata = {
   description: "The fastest way for developers to store and share code snippets.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+    const { data: snippets, error } = await supabase.from("snippets").select("id,title,description,code,language,views,saved_count").eq("visibility","Public").order("views",{ascending:false});
+    if(error) {
+    console.error(error.message);
+    return <div>Something went wrong while loading the data...</div>
+  }
+  
   return (
   
     <html lang="en" className={`dark ${spaceGrotesk.variable} ${jetBrainsMono.variable}`}>
       <body className="font-sans">
-         <Navbar/>
+         <Navbar snippets={snippets}/>
            <Toaster position="top-right" 
           toastOptions={{
             style: {

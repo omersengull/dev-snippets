@@ -9,16 +9,18 @@ import CommentItem from "@/components/CommentItem";
 import Footer from "@/components/Footer";
 import ViewTracker from "@/components/ViewTracker";
 import SnippetActions from "@/components/SnippetActionsContext";
-import { createCommentAction } from "@/app/actions/comments";
 import CommentInput from "@/components/CommentInput";
 import { buildCommentTree } from "@/components/CommentContainer";
-import toast from "react-hot-toast";
-import { revalidatePath } from "next/cache";
+import SortSelectButtons from "@/components/SortSelectButtons";
 interface PageProps {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ sort?: string }>;
 }
-export default async function SnippetPage({ params }: PageProps) {
+
+export default async function SnippetPage({ params, searchParams }: PageProps) {
   const { id } = await params;
+  const { sort } = await searchParams;
+  const currentSort = sort || "Top Rated";
   const supabase = await createClient();
   const { data: snippetData, error } = await supabase
     .from("snippets")
@@ -30,7 +32,18 @@ export default async function SnippetPage({ params }: PageProps) {
     .order("created_at", { foreignTable: "comments", ascending: true })
     .single();
   if (error || !snippetData) notFound();
-  const commentTree = buildCommentTree(snippetData.comments || []);
+  let commentsToProcess = [...(snippetData.comments || [])];
+  if (currentSort.toLowerCase() === "Newest".toLowerCase()) {
+    commentsToProcess.sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    );
+  } else if (currentSort.toLowerCase() === "Top Rated".toLowerCase()) {
+    commentsToProcess.sort(
+      (a, b) => (b.comment_likes?.length || 0) - (a.comment_likes?.length || 0),
+    );
+  }
+  const commentTree = buildCommentTree(commentsToProcess || []);
   const { data: userData } = await supabase.auth.getUser();
   const { data: savedData } = await supabase
     .from("saved_snippets")
@@ -138,13 +151,18 @@ export default async function SnippetPage({ params }: PageProps) {
 
           <section className="space-y-6 ">
             <div className="flex items-center justify-between">
-              {/* <h3 className="text-xl font-bold text-white">Discussion ({snippetData.comments.length + snippetData.comments.reduce((acc, c) => acc + c.replies.length, 0)})</h3> */}
+              <h3 className="text-xl font-bold text-white">
+                Discussion (
+                {commentTree.length +
+                  commentTree.reduce(
+                    (acc: any, c: any) => acc + c.replies.length,
+                    0,
+                  )}
+                )
+              </h3>
               <div className="flex items-center gap-2 text-sm text-text-muted">
                 <span>Sort by:</span>
-                <select className="bg-transparent border-none p-0 text-white font-bold focus:ring-0 cursor-pointer outline-none">
-                  <option className="bg-card">Newest</option>
-                  <option className="bg-card">Top Rated</option>
-                </select>
+                <SortSelectButtons initialValue={currentSort} />
               </div>
             </div>
 
@@ -161,6 +179,9 @@ export default async function SnippetPage({ params }: PageProps) {
                 <div key={comment.id} className="space-y-4">
                   {/* Main Comment */}
                   <CommentItem
+                    key={comment.id}
+                    snippetOwnerId={snippetData.user_id}
+                    user={userData?.user}
                     userName={userData.user?.user_metadata.full_name}
                     userAvatar={
                       userData.user?.user_metadata.avatar_url ||
@@ -171,29 +192,7 @@ export default async function SnippetPage({ params }: PageProps) {
                     comment={comment}
                   />
 
-                  {/* Replies */}
-                  {comment.replies && comment.replies.length > 0 && (
-                    <div className="mt-2 ml-5 relative">
-                      {/* ANA DİKEY HAT: Bu div içindeki tüm çocukların ortak çizgisidir */}
-                      <div className="absolute left-0 top-0 bottom-6 w-px bg-gray-800" />
-
-                      <div className="pl-6 space-y-8">
-                        {comment.replies.map((reply: Comment) => (
-                          <CommentItem
-                            userName={userData.user?.user_metadata.full_name}
-                            userAvatar={
-                              userData.user?.user_metadata.avatar_url ||
-                              userData.user?.user_metadata.picture
-                            }
-                            snippetId={id}
-                            key={reply.id}
-                            isReply={true}
-                            comment={reply}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                 
                 </div>
               ))}
             </div>

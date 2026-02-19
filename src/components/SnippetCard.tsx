@@ -27,9 +27,13 @@ export const SnippetCard: React.FC<SnippetCardProps> = ({ snippet }) => {
       {/* Header */}
       <div className="p-4 bg-dark-900/50 border-b border-white/5 flex justify-between items-center">
       <div className="flex items-center gap-3">       
-          <Link href={`/snippet/${snippet.id}`} className="p-1.5 hover:bg-white/10 rounded-md transition-all text-slate-500 hover:text-white" title="Review Code">
+          <Link href={`/snippet/${snippet.id}`} className="p-1.5 flex items-center hover:bg-white/10 rounded-md transition-all text-slate-500 hover:text-white" title="Review Code">
             <ExternalLink width={18}/>
+            <div className="text-sm ml-1">
+            {snippet.title.length >20 ? snippet.title.substring(0,20) + '...' : snippet.title}
+          </div>
           </Link>
+          
         </div>
         <div className="flex items-center gap-3">
           <div className="flex flex-col">

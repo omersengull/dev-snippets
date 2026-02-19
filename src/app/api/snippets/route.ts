@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient(); 
 
-    const { title, code, language, description ,visibility, tags, lines, file_name} = await request.json();
+    const { title, code, language, description ,visibility, lines, file_name} = await request.json();
    
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -28,7 +28,6 @@ export async function POST(request: NextRequest) {
           language,
           visibility,
           user_id: user.id,
-          tags,
           lines,
           file_name
 

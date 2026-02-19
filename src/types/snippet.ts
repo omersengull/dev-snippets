@@ -6,7 +6,6 @@ export interface Snippet{
     code:string;
     language:string;
     created_at:string;
-    tags:string[];
     file_name:string;
     views:number;
     saved:number;

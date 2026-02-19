@@ -1,4 +1,5 @@
 export const SUPPORTED_LANGUAGES = [
+  { label: "SELECT A LANGUAGE",extension: "",  value: "SELECT A LANGUAGE" },
   { label: "JavaScript",extension: ".js",  value: "javascript" },
   { label: "TypeScript",extension: ".ts", value: "typescript" },
   { label: "HTML",extension: ".html", value: "html" },

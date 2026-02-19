@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
 interface CommentInputProps {
+  clickedReply?:boolean;
+  setClickedReply?:React.Dispatch<React.SetStateAction<boolean>>;
   snippetId: string;
   userAvatar: string;
   userName: string;
@@ -12,6 +14,8 @@ interface CommentInputProps {
 }
 const CommentInput = ({
   snippetId,
+  clickedReply,
+  setClickedReply,
   userAvatar,
   userName,
   parentId = null,
@@ -29,11 +33,13 @@ const CommentInput = ({
       });
       setText("");
       toast.success("Comment added successfully!");
+
     } catch (error) {
       toast.error("An error occurred!" + error);
     }
     finally{
       setIsLoading(false);
+      if(setClickedReply) setClickedReply(false);  
     }
   };
   return (

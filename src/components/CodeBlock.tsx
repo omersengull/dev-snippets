@@ -7,6 +7,7 @@ interface CodeBlockProps {
   language: string;
   className?: string;
   showLineNumbers?: boolean;
+  maxHeight?: string;
 }
 
 export const CodeBlock: React.FC<CodeBlockProps> = ({
@@ -14,9 +15,11 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   language,
   className = "",
   showLineNumbers = false,
+  maxHeight = "500px"
 }) => {
   return (
-    <div className={`font-mono text-sm leading-relaxed overflow-x-auto ${className}`}>
+    <div className={`font-mono text-sm leading-relaxed overflow-x-auto ${className}`}
+    style={{ maxHeight: maxHeight, display: 'flex', flexDirection: 'column' }}>
         <SyntaxHighlighter
           language={language}
           style={vscDarkPlus}
