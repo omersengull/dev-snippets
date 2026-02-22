@@ -21,7 +21,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
     <div className={`font-mono text-sm leading-relaxed overflow-x-auto ${className}`}
     style={{ maxHeight: maxHeight, display: 'flex', flexDirection: 'column' }}>
         <SyntaxHighlighter
-          language={language}
+          language={language.toLocaleLowerCase()}
           style={vscDarkPlus}
           showLineNumbers={showLineNumbers}
           customStyle={{

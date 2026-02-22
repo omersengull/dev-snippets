@@ -67,7 +67,7 @@ const ExplorePage = () => {
         {/* Snippets List */}
         <div className="flex flex-col gap-6">
           {TRENDING_SNIPPETS.map(snippet => (
-            <SnippetCard key={snippet.id} snippet={snippet} detailed />
+            <SnippetCard key={snippet.id} snippet={snippet}  />
           ))}
         </div>
 

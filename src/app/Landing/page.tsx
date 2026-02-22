@@ -3,6 +3,7 @@ import { SnippetCard } from "../../components/SnippetCard";
 import { Code, Cloud, Copy, ArrowRight } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
 import Footer from "@/components/Footer";
+import Link from "next/link";
 
 export const LandingPage = async () => {
   const supabase = await createClient();
@@ -52,12 +53,14 @@ export const LandingPage = async () => {
             </div>
 
             <div className="flex gap-4">
-              <button className="flex min-w-[160px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary hover:bg-primary-hover text-white text-base font-bold transition-all hover:scale-105 neon-glow">
-                Explore Snippets
-              </button>
-              <button className="flex min-w-[160px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 border border-white/10 glass text-white text-base font-bold hover:bg-white/5 transition-all">
+             <Link
+                href="/explore"
+                className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-bold transition-all neon-glow group"
+              >   Explore Snippets
+              </Link>
+              <Link href="/createSnippet" className="flex min-w-[160px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 border border-white/10 glass text-white text-base font-bold hover:bg-white/5 transition-all">
                 Create Snippet
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -78,7 +81,7 @@ export const LandingPage = async () => {
               <div className="p-6 bg-dark-950/80">
                 <CodeBlock
                   code={heroCode}
-                  language="TypeScript"
+                  language="javascript"
                   showLineNumbers={true}
                 />
               </div>

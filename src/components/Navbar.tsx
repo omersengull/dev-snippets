@@ -21,6 +21,20 @@ export const Navbar = ({ snippets }: { snippets: SnippetProps[] | null }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isOpen,setIsOpen]=useState(false);
+  const wrapperRef=useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    function handleClickOutside(event:MouseEvent){
+      if(wrapperRef.current && !wrapperRef.current.contains(event.target as Node)){
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener("mousedown",handleClickOutside);
+    return ()=>{
+      document.removeEventListener("mousedown",handleClickOutside);
+    }
+  }, [wrapperRef])
+  
   const filteredSnippets = useMemo(() => {
     if (!searchQuery.trim()) return [];
     return snippets?.filter(
@@ -102,7 +116,7 @@ export const Navbar = ({ snippets }: { snippets: SnippetProps[] | null }) => {
 
           {/* Search Bar - Hidden on mobile or simplified */}
           <div className="flex-1 max-w-2xl hidden sm:block">
-            <div className="relative group">
+            <div ref={wrapperRef} className="relative group">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-primary transition-colors">
                 <Search size={18} />
               </div>
@@ -110,12 +124,13 @@ export const Navbar = ({ snippets }: { snippets: SnippetProps[] | null }) => {
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
+                  setIsOpen(true);
                 }}
                 type="text"
                 className="block w-full pl-10 pr-3 py-2 bg-dark-900 border border-dark-700 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all"
                 placeholder="Search snippets, tags, or authors..."
               />
-              {searchQuery && (
+              {isOpen && (
                 <div className="absolute bg-dark-800 border border-dark-700 rounded-xl mt-2 w-full max-h-80 overflow-y-auto shadow-2xl z-50">
                   {filteredSnippets && filteredSnippets.length > 0 ? (
                     filteredSnippets.map((snippet) => (
