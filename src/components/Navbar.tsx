@@ -169,9 +169,6 @@ export const Navbar = ({ snippets }: { snippets: SnippetProps[] | null }) => {
                 <span className="whitespace-nowrap">Create Snippet</span>
               </Link>
             </nav>
-            <button className="hidden sm:block text-slate-400 hover:text-white transition-colors">
-              <Bell size={20} />
-            </button>
             {/* Mobile Menu Toggle */}
             <button className="lg:hidden text-slate-400 hover:text-white">
               <Menu size={24} />
