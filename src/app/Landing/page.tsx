@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 
-export const LandingPage = async () => {
+const LandingPage = async () => {
   const supabase = await createClient();
   const { data: snippets, error } = await supabase
     .from("snippets")
@@ -108,7 +108,7 @@ export const LandingPage = async () => {
             <FeatureItem
               icon={<Code size={24} />}
               title="Syntax Highlighting"
-              desc="Support for 100+ languages with vibrant themes that make code pop."
+              desc="Support for 22 languages with vibrant themes that make code pop."
             />
             <FeatureItem
               icon={<Cloud size={24} />}
@@ -178,3 +178,4 @@ const FeatureItem = ({
     <p className="text-slate-400">{desc}</p>
   </div>
 );
+export default LandingPage;

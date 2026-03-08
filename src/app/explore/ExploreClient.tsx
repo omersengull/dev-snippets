@@ -111,16 +111,7 @@ const ExploreClient = ({
     },
   ];
 
-  const trendingSnippetsLanguageCounts = snippets.reduce(
-    (acc: Record<string, number>, x) => {
-      acc[x.language] = (acc[x.language] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-  const sortedTSnippetsLCounts = Object.entries(
-    trendingSnippetsLanguageCounts,
-  ).sort(([, a], [, b]) => b - a);
+ 
   const filtered = useMemo(() => {
     if (!snippets) return [];
 
