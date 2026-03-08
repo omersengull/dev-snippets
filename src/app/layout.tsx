@@ -30,7 +30,7 @@ export default async function RootLayout({
     const { data: snippets, error } = await supabase.from("snippets").select("id,title,description,code,language,views,saved_count").eq("visibility","Public").order("views",{ascending:false});
     if(error) {
     console.error(error.message);
-    return <div>Something went wrong while loading the data...</div>
+    return <html><body><div>Hata</div></body></html>
   }
   
   return (

@@ -10,10 +10,10 @@ export async function toggleBookmarkAction(snippetId: string) {
 
   const { data: existing } = await supabase
     .from("saved_snippets")
-    .select()
+    .select("id")
     .eq("snippet_id", snippetId)
     .eq("user_id", user.id)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     await supabase.from('saved_snippets').delete().eq('id',existing.id);
@@ -22,4 +22,5 @@ export async function toggleBookmarkAction(snippetId: string) {
     await supabase.from('saved_snippets').insert([{snippet_id:snippetId,user_id:user.id}]);
   }
   revalidatePath(`/snippet/${snippetId}`);
+  return { success: true };
 }

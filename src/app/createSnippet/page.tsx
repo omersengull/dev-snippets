@@ -80,9 +80,10 @@ const CreateSnippetPage = () => {
         }
         return;
       }
-
+      const newSnippet=await res.json();
       toast.success("Snippet successfully added!");
-      router.push("/");
+      router.refresh();
+      router.push(`/snippet/${newSnippet.data.id}`);
     } catch (err: any) {
       toast.error(err.message);
     } finally {

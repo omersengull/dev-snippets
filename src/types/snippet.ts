@@ -8,7 +8,7 @@ export interface Snippet{
     created_at:string;
     file_name:string;
     views:number;
-    saved:number;
+    saved_count:number;
     lines:number;
     visibility: 'Public' | 'Private';
     profiles: Profile;

@@ -12,6 +12,8 @@ import SnippetActions from "@/components/SnippetActionsContext";
 import CommentInput from "@/components/CommentInput";
 import { buildCommentTree } from "@/components/CommentContainer";
 import SortSelectButtons from "@/components/SortSelectButtons";
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 interface PageProps {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ sort?: string }>;
@@ -168,9 +170,13 @@ export default async function SnippetPage({ params, searchParams }: PageProps) {
 
             {/* Input Area */}
             <CommentInput
-              userName={snippetData.profiles.full_name}
+              userName={userData.user?.user_metadata.full_name}
               snippetId={id}
-              userAvatar={snippetData.profiles.avatar_url}
+              userAvatar={
+                      userData.user?.user_metadata.avatar_url ||
+                      userData.user?.user_metadata.picture
+                      || null
+                    }
             />
 
             {/* Comment List */}

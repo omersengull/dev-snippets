@@ -7,12 +7,18 @@ import Link from "next/link";
 
 export const LandingPage = async () => {
   const supabase = await createClient();
-  const { data: snippets, error } = await supabase.from("snippets").select(`*,
+  const { data: snippets, error } = await supabase
+    .from("snippets")
+    .select(
+      `*,
     profiles(
-    full_name,avatar_url)`).eq("visibility","Public").order("created_at",{ascending:false});
-  if(error) {
+    full_name,avatar_url)`,
+    )
+    .eq("visibility", "Public")
+    .order("created_at", { ascending: false });
+  if (error) {
     console.error(error.message);
-    return <div>Something went wrong while loading the data...</div>
+    return <div>Something went wrong while loading the data...</div>;
   }
   const heroCode = `export const useAuth = () => {
   const [user, setUser] = useState(null);
@@ -53,12 +59,17 @@ export const LandingPage = async () => {
             </div>
 
             <div className="flex gap-4">
-             <Link
+              <Link
                 href="/explore"
                 className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-bold transition-all neon-glow group"
-              >   Explore Snippets
+              >
+                {" "}
+                Explore Snippets
               </Link>
-              <Link href="/createSnippet" className="flex min-w-[160px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 border border-white/10 glass text-white text-base font-bold hover:bg-white/5 transition-all">
+              <Link
+                href="/createSnippet"
+                className="flex min-w-[160px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 border border-white/10 glass text-white text-base font-bold hover:bg-white/5 transition-all"
+              >
                 Create Snippet
               </Link>
             </div>
@@ -124,24 +135,28 @@ export const LandingPage = async () => {
               Discover what the community is building today.
             </p>
           </div>
-          <button className="text-primary text-sm font-bold flex items-center gap-1 hover:underline group">
-            View All{" "}
-            <ArrowRight
-              size={16}
-              className="group-hover:translate-x-1 transition-transform"
-            />
-          </button>
+          
+            <Link href='/explore'>
+            <button className="text-primary text-sm font-bold flex items-center gap-1 hover:underline group">
+              View All{" "}
+              <ArrowRight
+                size={16}
+                className="group-hover:translate-x-1 transition-transform"
+              />
+            </button>
+            </Link>
+          
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-          {snippets.map((snippet) => (
+          {snippets.slice(0, 4).map((snippet) => (
             <SnippetCard key={snippet.id} snippet={snippet} />
           ))}
         </div>
       </section>
 
       {/* Footer */}
-      <Footer/>
+      <Footer />
     </div>
   );
 };
@@ -163,5 +178,3 @@ const FeatureItem = ({
     <p className="text-slate-400">{desc}</p>
   </div>
 );
-
-
