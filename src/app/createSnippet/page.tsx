@@ -55,6 +55,7 @@ const CreateSnippetPage = () => {
 
     const formData = new FormData(e.currentTarget);
     const payload: SnippetCreateInput = {
+      saved_count:0,
       title: title.trim(),
       file_name: title.trim() + selectedLanguage.extension,
       language: formData.get("language") as string,
